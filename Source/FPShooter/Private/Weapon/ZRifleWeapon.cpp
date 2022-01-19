@@ -15,8 +15,8 @@ AZRifleWeapon::AZRifleWeapon()
 
 void AZRifleWeapon::StartFire()
 {
-	MakeShot();
 	GetWorldTimerManager().SetTimer(ShortTimerHandle,this,&AZRifleWeapon::MakeShot, TimeBetweenShots,true);
+	MakeShot();
 }
 
 void AZRifleWeapon::StopFire()

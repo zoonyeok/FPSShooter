@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/ZAnimNotify.h"
-#include "ZEquipFinishedAnimNotify.generated.h"
+#include "ZReloadFinishedAnimNotify.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FPSHOOTER_API UZEquipFinishedAnimNotify : public UZAnimNotify
+class FPSHOOTER_API UZReloadFinishedAnimNotify : public UZAnimNotify
 {
 	GENERATED_BODY()
 };

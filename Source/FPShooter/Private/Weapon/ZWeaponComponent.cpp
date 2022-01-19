@@ -5,13 +5,17 @@
 #include "Engine/World.h"
 #include "GameFrameWork/Character.h"
 #include "Animation/ZEquipFinishedAnimNotify.h"
+#include "Animation/ZReloadFinishedAnimNotify.h"
 #include "Player/SAnimInstance.h"
+#include "Animation/AnimUtils.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All , All)
 
+constexpr static int32 WeaponNum = 2;
+
 UZWeaponComponent::UZWeaponComponent()
 	: WeaponEquipSocketName("WeaponSocket"),WeaponArmorySocketName("ArmorySocket"), CurrentWeapon(nullptr)
-	,CurrentReloadAnimMontage(nullptr), CurrentWeaponIndex(0), EquipAnimInProgress(false)
+	,CurrentReloadAnimMontage(nullptr), CurrentWeaponIndex(0), EquipAnimInProgress(false), ReloadAnimInProgress(false)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
@@ -20,6 +24,9 @@ void UZWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	checkf(WeaponData.Num() == WeaponNum, TEXT("Our Character can hold only %d weapons items"), WeaponNum);
+
+	CurrentWeaponIndex = 0;
 	InitAnimations();
 	SpawnWeapons();
 	EquipWeapon(CurrentWeaponIndex);
@@ -49,6 +56,7 @@ void UZWeaponComponent::SpawnWeapons()
 		auto Weapon = GetWorld()->SpawnActor<AZBaseWeapon>(OneWeaponData.WeaponClass);
 		if (Weapon == nullptr) continue;
 
+		Weapon->OnClipEmpty.AddUObject(this, &UZWeaponComponent::OnEmptyClip);
 		Weapon->SetOwner(Character);
 		Weapons.Add(Weapon);
 
@@ -124,18 +132,28 @@ void UZWeaponComponent::PlayAnimMontage(UAnimMontage* Animation)
 
 void UZWeaponComponent::InitAnimations()
 {
-	if (EquipAnimMontage == nullptr) return;
-	
-	const auto NotifyEvents = EquipAnimMontage->Notifies;
-	for(auto NotifyEvent : NotifyEvents)
+	auto EquipFinishedNofify = AnimUtils::FindNotifyByClass<UZEquipFinishedAnimNotify>(EquipAnimMontage);
+	if(EquipFinishedNofify)
 	{
-		auto EquipFinishedNofify = Cast<UZEquipFinishedAnimNotify>(NotifyEvent.Notify);
-		if(EquipFinishedNofify)
-		{
-			EquipFinishedNofify->OnNotified.AddUObject(this,&UZWeaponComponent::OnEquipFinished);
-			break;
-		}
+		EquipFinishedNofify->OnNotified.AddUObject(this,&UZWeaponComponent::OnEquipFinished);
 	}
+	else
+	{
+		UE_LOG(LogWeaponComponent, Error, TEXT("Equip anim notify is forgotten to set"));
+		checkNoEntry();
+	}
+
+	for (auto OneWeaponData : WeaponData)
+	{
+		auto ReloadFinishedNotify = AnimUtils::FindNotifyByClass<UZReloadFinishedAnimNotify>(OneWeaponData.ReloadAnimMontage);
+		if (!ReloadFinishedNotify)
+		{
+			UE_LOG(LogWeaponComponent, Error, TEXT("Reload anim notify is forgotten to set"));
+			checkNoEntry();
+		}
+		ReloadFinishedNotify->OnNotified.AddUObject(this, &UZWeaponComponent::OnReloadFinished);
+	}
+	
 }
 
 void UZWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
@@ -149,15 +167,46 @@ void UZWeaponComponent::OnEquipFinished(USkeletalMeshComponent* MeshComponent)
 
 bool UZWeaponComponent::CanFire() const
 {
-	return CurrentWeapon && (!EquipAnimInProgress);
+	return CurrentWeapon && !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
 bool UZWeaponComponent::CanEquip() const
 {
-	return !EquipAnimInProgress;
+	return !EquipAnimInProgress && !ReloadAnimInProgress;
 }
 
 void UZWeaponComponent::Reload()
 {
+	ChangeClip();
+}
+
+void UZWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
+{
+	ACharacter* Character = Cast<ACharacter>(GetOwner());
+	if (Character == nullptr || MeshComponent != Character->GetMesh()) return;
+
+	ReloadAnimInProgress = false;
+	UE_LOG(LogWeaponComponent, Display, TEXT("Reload Finished"));
+}
+
+bool UZWeaponComponent::CanReload() const
+{
+	return CurrentWeapon//
+		&& (!EquipAnimInProgress)//
+		&& (!ReloadAnimInProgress)//
+		&& CurrentWeapon->CanReload();
+}
+
+void UZWeaponComponent::OnEmptyClip()
+{
+	ChangeClip();
+}
+
+void UZWeaponComponent::ChangeClip()
+{
+	if (!CanReload()) return;
+	CurrentWeapon->StopFire();
+	CurrentWeapon->ChangeClip();
+	ReloadAnimInProgress = true;
 	PlayAnimMontage(CurrentReloadAnimMontage);
 }
