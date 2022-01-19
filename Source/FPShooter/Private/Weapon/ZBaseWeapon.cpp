@@ -36,7 +36,11 @@ void AZBaseWeapon::StopFire()
 
 void AZBaseWeapon::MakeShot()
 {
-	if (GetWorld() == nullptr || IsAmmoEmpty()) return;
+	if (GetWorld() == nullptr || IsAmmoEmpty())
+	{
+		StopFire();
+		return;
+	}
 	
 	FVector TraceStart,TraceEnd;
 	if (GetTraceData(TraceStart, TraceEnd) == false) return;

@@ -26,10 +26,18 @@ void AZRifleWeapon::StopFire()
 
 void AZRifleWeapon::MakeShot()
 {
-	if (GetWorld() == nullptr || IsAmmoEmpty()) return;
+	if (GetWorld() == nullptr || IsAmmoEmpty())
+	{
+		StopFire();
+		return;
+	}
 	
 	FVector TraceStart,TraceEnd;
-	if (GetTraceData(TraceStart, TraceEnd) == false) return;
+	if (GetTraceData(TraceStart, TraceEnd) == false) 
+	{
+		StopFire();
+		return;
+	}
 
 	FHitResult HitResult;
 	MakeHit(HitResult, TraceStart, TraceEnd);

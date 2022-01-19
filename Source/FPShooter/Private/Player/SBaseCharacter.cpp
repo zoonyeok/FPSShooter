@@ -112,6 +112,7 @@ void ASBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, WeaponComponent, &UZWeaponComponent::StartFire);
 	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, WeaponComponent, &UZWeaponComponent::StopFire);
 	PlayerInputComponent->BindAction("NextWeapon", IE_Pressed, WeaponComponent, &UZWeaponComponent::NextWeapon);
+	PlayerInputComponent->BindAction("Reload", IE_Pressed, WeaponComponent, &UZWeaponComponent::Reload);
 	
 	// Action 
 	PlayerInputComponent->BindAction("Jump", EInputEvent::IE_Pressed, this, &ASBaseCharacter::Jump);

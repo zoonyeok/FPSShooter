@@ -6,7 +6,18 @@
 #include "Components/ActorComponent.h"
 #include "ZWeaponComponent.generated.h"
 
-class AZBaseWeapon;
+
+USTRUCT(BlueprintType)
+struct FWeaponData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	TSubclassOf<class AZBaseWeapon> WeaponClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
+	UAnimMontage* ReloadAnimMontage;
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FPSHOOTER_API UZWeaponComponent : public UActorComponent
@@ -19,13 +30,12 @@ public:
 	void StartFire();
 	void StopFire();
 	void NextWeapon();
+	void Reload();
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	TArray<TSubclassOf<AZBaseWeapon>> WeaponClasses;
+	TArray<FWeaponData> WeaponData;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	FName WeaponEquipSocketName;
@@ -35,9 +45,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category= "Animation")
 	UAnimMontage* EquipAnimMontage;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category= "Animation")
 	class USAnimInstance* AnimInstance;
+
+	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:	
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
@@ -45,6 +58,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
 	TArray<AZBaseWeapon*> Weapons;
+
+	UPROPERTY()
+	UAnimMontage* CurrentReloadAnimMontage;
 
 	int32 CurrentWeaponIndex;
 	bool EquipAnimInProgress;

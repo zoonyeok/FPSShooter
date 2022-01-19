@@ -11,7 +11,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogWeaponComponent, All , All)
 
 UZWeaponComponent::UZWeaponComponent()
 	: WeaponEquipSocketName("WeaponSocket"),WeaponArmorySocketName("ArmorySocket"), CurrentWeapon(nullptr)
-	,CurrentWeaponIndex(0), EquipAnimInProgress(false)
+	,CurrentReloadAnimMontage(nullptr), CurrentWeaponIndex(0), EquipAnimInProgress(false)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
@@ -23,7 +23,6 @@ void UZWeaponComponent::BeginPlay()
 	InitAnimations();
 	SpawnWeapons();
 	EquipWeapon(CurrentWeaponIndex);
-	
 }
 
 void UZWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -45,9 +44,9 @@ void UZWeaponComponent::SpawnWeapons()
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if (Character == nullptr) return;
 
-	for(auto WeaponClass : WeaponClasses)
+	for(auto OneWeaponData : WeaponData)
 	{
-		auto Weapon = GetWorld()->SpawnActor<AZBaseWeapon>(WeaponClass);
+		auto Weapon = GetWorld()->SpawnActor<AZBaseWeapon>(OneWeaponData.WeaponClass);
 		if (Weapon == nullptr) continue;
 
 		Weapon->SetOwner(Character);
@@ -69,6 +68,12 @@ void UZWeaponComponent::AttachWeaponToSocket(AZBaseWeapon* Weapon, USceneCompone
 
 void UZWeaponComponent::EquipWeapon(int32 WeaponIndex)
 {
+	if (WeaponIndex < 0 || WeaponIndex >= Weapons.Num())
+	{
+		UE_LOG(LogWeaponComponent, Warning, TEXT("Invalid weapon index"));
+		return;
+	}
+	
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
 	if (Character == nullptr) return;
 
@@ -79,6 +84,12 @@ void UZWeaponComponent::EquipWeapon(int32 WeaponIndex)
 	}
 	
 	CurrentWeapon = Weapons[WeaponIndex];
+	//CurrentReloadAnimMontage = WeaponData[WeaponIndex].ReloadAnimMontage;
+	const auto CurrentWeaponData = WeaponData.FindByPredicate([&](const FWeaponData& Data){	//
+		return Data.WeaponClass == CurrentWeapon->GetClass();											//
+	});
+	CurrentReloadAnimMontage = CurrentWeaponData ? CurrentWeaponData->ReloadAnimMontage : nullptr;
+
 	AttachWeaponToSocket(CurrentWeapon,Character->GetMesh(), WeaponEquipSocketName);
 	EquipAnimInProgress = true;
 	PlayAnimMontage(EquipAnimMontage);
@@ -144,4 +155,9 @@ bool UZWeaponComponent::CanFire() const
 bool UZWeaponComponent::CanEquip() const
 {
 	return !EquipAnimInProgress;
+}
+
+void UZWeaponComponent::Reload()
+{
+	PlayAnimMontage(CurrentReloadAnimMontage);
 }
