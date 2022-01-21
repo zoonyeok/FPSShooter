@@ -44,6 +44,7 @@ struct FWeaponUIData
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
 	UTexture2D* CrossHairIcon;
 };
-//** Health
+
+//** Health Deligates
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged, float);

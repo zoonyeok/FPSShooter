@@ -180,16 +180,6 @@ void UZWeaponComponent::Reload()
 	ChangeClip();
 }
 
-bool UZWeaponComponent::GetWeaponUIData(FWeaponUIData& UIData) const
-{
-	if (CurrentWeapon)
-	{
-		UIData = CurrentWeapon->GetUIData();
-		return true;	
-	}
-	return false;
-}
-
 void UZWeaponComponent::OnReloadFinished(USkeletalMeshComponent* MeshComponent)
 {
 	ACharacter* Character = Cast<ACharacter>(GetOwner());
@@ -219,4 +209,24 @@ void UZWeaponComponent::ChangeClip()
 	CurrentWeapon->ChangeClip();
 	ReloadAnimInProgress = true;
 	PlayAnimMontage(CurrentReloadAnimMontage);
+}
+
+bool UZWeaponComponent::GetCurrentWeaponUIData(FWeaponUIData& UIData) const
+{
+	if (CurrentWeapon)
+	{
+		UIData = CurrentWeapon->GetUIData();
+		return true;	
+	}
+	return false;
+}
+
+bool UZWeaponComponent::GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const
+{
+	if (CurrentWeapon)
+	{
+		AmmoData = CurrentWeapon->GetAmmoData();
+		return true;	
+	}
+	return false;
 }

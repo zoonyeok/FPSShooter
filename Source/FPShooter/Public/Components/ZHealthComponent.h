@@ -21,7 +21,7 @@ public:
 	float GetHealthPercent() const { return Health / MaxHealth; }
 
 	UFUNCTION(BlueprintCallable, Category="Health")
-	bool BIsDead() const { return FMath::IsNearlyZero(Health); }
+	bool IsDead() const { return FMath::IsNearlyZero(Health); }
 	//bool BIsDead() const { return Health <= 0; }
 	
 	FOnDeath OnDeath;

@@ -2,10 +2,8 @@
 
 #include "Weapon/ZBaseWeapon.h"
 #include "Components/SkeletalMeshComponent.h"
-//#include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "GameFrameWork/Character.h"
-#include "GameFramework/Controller.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All)
 

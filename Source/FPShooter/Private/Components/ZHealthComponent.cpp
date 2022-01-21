@@ -33,14 +33,14 @@ void UZHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, cons
 	AController* InstigatedBy, AActor* DamageCauser)
 {
 	//UE_LOG(LogHealthComponent,Display,TEXT("Damage: %f"),Damage);
-	if (Damage <= 0.0f || BIsDead() || (!GetWorld()) ) return;
+	if (Damage <= 0.0f || IsDead() || (!GetWorld()) ) return;
 	
 	//Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
 	SetHealth(Health - Damage);
 	// 피격시 힐 젠 중지
 	GetWorld()->GetTimerManager().ClearTimer(HealGenTimerHandle);
 	
-	if (BIsDead())
+	if (IsDead())
 	{
 		OnDeath.Broadcast();
 	}
