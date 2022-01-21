@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ZBaseWeapon.h"
 #include "Components/ActorComponent.h"
 #include "ZCoreTypes.h"
 #include "ZWeaponComponent.generated.h"
@@ -19,6 +20,8 @@ public:
 	void StopFire();
 	void NextWeapon();
 	void Reload();
+
+	bool GetWeaponUIData(FWeaponUIData& UIData) const;
 
 protected:
 	

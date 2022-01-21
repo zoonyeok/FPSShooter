@@ -23,6 +23,8 @@ public:
 	void ChangeClip();
 	bool CanReload() const;
 
+	FWeaponUIData GetUIData() const { return UIData; }
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -38,6 +40,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	FAmmoData DefaultAmmo;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "UI")
+	FWeaponUIData UIData;
 	
 	virtual void MakeShot();
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const;
