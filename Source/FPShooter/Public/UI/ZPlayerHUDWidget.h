@@ -30,8 +30,4 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category= "UI")
 	bool IsPlayerSpectating() const;
-
-private:
-	class UZWeaponComponent* GetWeaponComponent() const;
-	class UZHealthComponent* GetHealthComponent() const;
 };
