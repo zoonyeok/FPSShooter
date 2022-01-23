@@ -197,9 +197,24 @@ bool UZWeaponComponent::CanReload() const
 		&& CurrentWeapon->CanReload();
 }
 
-void UZWeaponComponent::OnEmptyClip()
+void UZWeaponComponent::OnEmptyClip(AZBaseWeapon* AmmoEmptyWeapon)
 {
-	ChangeClip();
+	if (AmmoEmptyWeapon == nullptr) return;
+	
+	if (CurrentWeapon == AmmoEmptyWeapon)
+	{
+		ChangeClip();
+	}
+	else
+	{
+		for(const auto Weapon: Weapons)
+		{
+			if (Weapon == AmmoEmptyWeapon)
+			{
+				Weapon->ChangeClip();
+			}
+		}
+	}
 }
 
 void UZWeaponComponent::ChangeClip()
@@ -227,6 +242,19 @@ bool UZWeaponComponent::GetCurrentWeaponAmmoData(FAmmoData& AmmoData) const
 	{
 		AmmoData = CurrentWeapon->GetAmmoData();
 		return true;	
+	}
+	return false;
+}
+
+bool UZWeaponComponent::TryToAddAmmo(TSubclassOf<AZBaseWeapon> WeaponType, int32 ClipsAmount)
+{
+	// Find WeaponType
+	for(const auto Weapon : Weapons)
+	{
+		if (Weapon && Weapon->IsA(WeaponType))
+		{
+			return Weapon->TryToAddAmmo(ClipsAmount);
+		}
 	}
 	return false;
 }

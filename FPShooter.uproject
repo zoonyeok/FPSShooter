@@ -18,6 +18,14 @@
 		{
 			"Name": "CLionSourceCodeAccess",
 			"Enabled": false
+		},
+		{
+			"Name": "NiagaraExtras",
+			"Enabled": true
+		},
+		{
+			"Name": "CascadeToNiagaraConverter",
+			"Enabled": true
 		}
 	]
 }

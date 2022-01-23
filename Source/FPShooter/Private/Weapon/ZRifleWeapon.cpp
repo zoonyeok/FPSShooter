@@ -5,12 +5,20 @@
 #include "DrawDebugHelpers.h"
 #include "SBaseCharacter.h"
 #include "GameFrameWork/Character.h"
+#include "ZWeaponFXComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogRifleWeapon, All, All)
 
 AZRifleWeapon::AZRifleWeapon()
 	: TimeBetweenShots(0.1f), BulletSpread(1.5f), DamageAmount(10.f), RecoilCoefficient(1.0f)
 {
+	WeaponFXComponent = CreateDefaultSubobject<UZWeaponFXComponent>(TEXT("WeaponFXComponent"));
+}
+
+void AZRifleWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	check(WeaponFXComponent);
 }
 
 void AZRifleWeapon::StartFire()
@@ -45,8 +53,9 @@ void AZRifleWeapon::MakeShot()
 	if (HitResult.bBlockingHit)
 	{
 		MakeDamage(HitResult);
-		DrawDebugLine(GetWorld(), GetMuzzleLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
-		DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Green, false, 5.0f, 0, 2.0f);
+		//DrawDebugLine(GetWorld(), GetMuzzleLocation(), HitResult.ImpactPoint, FColor::Red, false, 3.0f, 0, 3.0f);
+		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 10.0f, 24, FColor::Green, false, 5.0f, 0, 2.0f);
+		WeaponFXComponent->PlayImpactFX(HitResult);
 		UE_LOG(LogRifleWeapon, Display, TEXT("Bone: %s"), *HitResult.BoneName.ToString());
 	}
 	else

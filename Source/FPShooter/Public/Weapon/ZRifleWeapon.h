@@ -6,6 +6,8 @@
 #include "Weapon/ZBaseWeapon.h"
 #include "ZRifleWeapon.generated.h"
 
+class UZWeaponFXComponent;
+
 /**
  * 
  */
@@ -31,8 +33,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon", meta = (ClampMin = "0.0", ClampMax = "1.0"))
 	float RecoilCoefficient;
 
+	UPROPERTY(VisibleAnywhere, Category = "VFX")
+	UZWeaponFXComponent* WeaponFXComponent;
+
+	virtual void BeginPlay() override;
 	virtual void MakeShot() override;
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
+	
 
 private:
 	FTimerHandle ShortTimerHandle;

@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "ZWeaponFXComponent.h"
 
 AZProjectile::AZProjectile()
 	: DamageRadius(200.f), DamageAmount(50.f), bDoFullDamage(false), LifeSeconds(5.0f)
@@ -15,11 +16,14 @@ AZProjectile::AZProjectile()
 	CollisionComponent->InitSphereRadius(5.0f);
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly); // 물리적 충돌만
 	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block); // 모두 반응
+	CollisionComponent->bReturnMaterialOnMove = true;
 	SetRootComponent(CollisionComponent);
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MoveComponent"));
 	MovementComponent->InitialSpeed = 2000.f;
 	MovementComponent->ProjectileGravityScale = 0.0f;
+
+	WeaponFXComponent = CreateDefaultSubobject<UZWeaponFXComponent>(TEXT("WeaponFXComponent"));
 }
 
 void AZProjectile::BeginPlay()
@@ -27,6 +31,7 @@ void AZProjectile::BeginPlay()
 	Super::BeginPlay();
 	check(CollisionComponent);
 	check(MovementComponent);
+	check(WeaponFXComponent);
 
 	MovementComponent->Velocity = ShotDirection * MovementComponent->InitialSpeed;
 	CollisionComponent->IgnoreActorWhenMoving(GetOwner(), true); // 캐릭터 충돌방지
@@ -51,7 +56,8 @@ void AZProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Ot
 		GetController(),							// 
 		bDoFullDamage);								//
 
-	DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.0f);
+	// DrawDebugSphere(GetWorld(), GetActorLocation(), DamageRadius, 24, FColor::Red, false, 5.0f);
+	WeaponFXComponent->PlayImpactFX(Hit);
 
 	Destroy();
 }

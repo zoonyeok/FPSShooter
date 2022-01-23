@@ -8,6 +8,8 @@
 #include "GameFramework/Character.h"
 #include "SBaseCharacter.generated.h"
 
+class UZHealthComponent;
+class UZWeaponComponent;
 UCLASS()
 class FPSHOOTER_API ASBaseCharacter : public ACharacter
 {
@@ -28,7 +30,7 @@ protected:
 	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stats")
-	class UZHealthComponent* HealthComponent;
+	UZHealthComponent* HealthComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Stats")
 	class UTextRenderComponent* HealthTextComponent;
@@ -46,7 +48,7 @@ protected:
 	TSubclassOf<class AZBaseWeapon> WeaponClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon")
-	class UZWeaponComponent* WeaponComponent;
+	UZWeaponComponent* WeaponComponent;
 	
 public:	
 	// Called every frame
@@ -60,7 +62,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category= Movement)
 	float GetMovementDirection() const;
-
+	
 private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, meta = (AllowPrivateAccess = "true"))

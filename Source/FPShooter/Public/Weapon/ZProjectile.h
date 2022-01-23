@@ -35,6 +35,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float LifeSeconds;
+
+	UPROPERTY(VisibleAnywhere, Category = "VFX")
+	class UZWeaponFXComponent* WeaponFXComponent;
 	
 	virtual void BeginPlay() override;
 
