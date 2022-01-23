@@ -3,6 +3,9 @@
 class ZUtils
 {
 public:
+	/**
+	 * Player의 컴포넌트 반환 템플릿으로 일반화
+	 **/
 	template<typename T>
 	static T* GetZPlayerComponentByClass(APawn* PlayerPawn)
 	{

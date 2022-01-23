@@ -2,8 +2,10 @@
 
 #include "Components/ZHealthComponent.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "Camera/CameraShake.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All , All)
 
@@ -48,6 +50,8 @@ void UZHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, cons
 	{
 		GetWorld()->GetTimerManager().SetTimer(HealGenTimerHandle, this, &UZHealthComponent::HealthGenerate,HealUpdateTime,true, HealDelay);
 	}
+
+	PlayCameraShake();
 }
 
 void UZHealthComponent::HealthGenerate()
@@ -77,4 +81,17 @@ bool UZHealthComponent::TryToAddHealth(float HealthAmount)
 bool UZHealthComponent::IsHealthFull() const
 {
 	return FMath::IsNearlyEqual(Health,MaxHealth);
+}
+
+void UZHealthComponent::PlayCameraShake()
+{
+	if (IsDead()) return;
+
+	const auto Player = Cast<APawn>(GetOwner());
+	if (Player == nullptr) return;
+
+	const auto Controller = Player->GetController<APlayerController>();
+	if (!Controller || !Controller->PlayerCameraManager) return;
+
+	Controller->PlayerCameraManager->StartCameraShake(CameraShake);
 }

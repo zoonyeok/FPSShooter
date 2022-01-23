@@ -179,6 +179,13 @@ void ASBaseCharacter::OnDeath()
 
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Ignore);
 	WeaponComponent->StopFire();
+
+	/* Ragdoll physics */
+	if (GetMesh())
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+		GetMesh()->SetSimulatePhysics(true);
+	}
 }
 
 void ASBaseCharacter::OnHealthChanged(float Health)
