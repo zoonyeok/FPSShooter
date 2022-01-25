@@ -5,6 +5,25 @@
 #include "ZWeaponComponent.h"
 #include "ZUtils.h"
 
+bool UZPlayerHUDWidget::Initialize()
+{
+	 const auto HealthComponent = ZUtils::GetZPlayerComponentByClass<UZHealthComponent>(GetOwningPlayerPawn());
+	 if(HealthComponent)
+	 {
+	 	HealthComponent->OnHealthChanged.AddUObject(this,&UZPlayerHUDWidget::OnHealthChanged);
+	 }
+	 
+	return Super::Initialize();
+}
+
+void UZPlayerHUDWidget::OnHealthChanged(float Health, float HealthDelta)
+{
+	if (HealthDelta < 0.0f)
+	{
+		OnTakeDamage();
+	}
+}
+
 float UZPlayerHUDWidget::GetHealthPercent() const
 {
 	const auto HealthComponent = ZUtils::GetZPlayerComponentByClass<UZHealthComponent>(GetOwningPlayerPawn());

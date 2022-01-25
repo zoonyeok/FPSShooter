@@ -5,13 +5,14 @@
 #include "GameFramework/Controller.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
+#include "ZPlayerHUDWidget.h"
 #include "Camera/CameraShake.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogHealthComponent, All , All)
 
 UZHealthComponent::UZHealthComponent()
 	: MaxHealth(100.0f) , AutoHeal(true), HealUpdateTime(1.0f), HealDelay(3.0f), HealModifier(1.0f)
-	,Health(0.0f)
+	,Health(0.0f), HealthDelta(0.0f)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
@@ -39,6 +40,7 @@ void UZHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, cons
 	
 	//Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
 	SetHealth(Health - Damage);
+	
 	// 피격시 힐 젠 중지
 	GetWorld()->GetTimerManager().ClearTimer(HealGenTimerHandle);
 	
@@ -67,8 +69,10 @@ void UZHealthComponent::HealthGenerate()
 
 void UZHealthComponent::SetHealth(float NewHealth)
 {
-	Health = FMath::Clamp(NewHealth,0.0f,MaxHealth);
-	OnHealthChanged.Broadcast(Health);
+	const auto NextHealth = FMath::Clamp(NewHealth,0.0f,MaxHealth);
+	HealthDelta = NextHealth - Health;
+	Health = NextHealth;
+	OnHealthChanged.Broadcast(Health,HealthDelta);
 }
 
 bool UZHealthComponent::TryToAddHealth(float HealthAmount)

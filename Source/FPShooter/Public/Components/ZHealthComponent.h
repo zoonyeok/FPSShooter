@@ -16,6 +16,7 @@ public:
 	UZHealthComponent();
 	
 	float GetHealth() const { return Health; }
+	float GetHealthDelta() const { return HealthDelta; }
 
 	UFUNCTION(BlueprintCallable, Category="Health")
 	float GetHealthPercent() const { return Health / MaxHealth; }
@@ -53,6 +54,7 @@ protected:
 
 private:
 	float Health;
+	float HealthDelta;
 	FTimerHandle HealGenTimerHandle;
 	
 	UFUNCTION()

@@ -36,6 +36,7 @@ void AZLauncherWeapon::MakeShot()
 	}
 
 	DecreaseAmmo();
+	SpawnMuzzleFX();
 	// **Temp Spawn Projectile
 	// auto TempProjectile = UGameplayStatics::BeginDeferredActorSpawnFromClass(GetWorld(),ProjectileClass,SpawnTransform);
 	// UGameplayStatics::FinishSpawningActor(Projectile,SpawnTransform);

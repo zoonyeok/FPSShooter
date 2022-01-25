@@ -4,6 +4,8 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DrawDebugHelpers.h"
 #include "GameFrameWork/Character.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseWeapon, All, All)
 
@@ -91,7 +93,7 @@ bool AZBaseWeapon::GetTraceData(FVector& TraceStart, FVector& TraceEnd) const
 	if (GetPlayerViewPoint(ViewLocation, ViewRotation) == false) return false;
 
 	TraceStart = ViewLocation;
-	const FVector ShootDirection =ViewRotation.Vector();
+	const FVector ShootDirection = ViewRotation.Vector();
 	TraceEnd = TraceStart + ShootDirection * TraceMaxDistance;
 	return true;
 }
@@ -197,4 +199,14 @@ bool AZBaseWeapon::TryToAddAmmo(int32 ClipsAmount)
 		UE_LOG(LogBaseWeapon, Display, TEXT("Bullets were added"));
 	}
 	return true;
+}
+
+UNiagaraComponent* AZBaseWeapon::SpawnMuzzleFX()
+{
+	return UNiagaraFunctionLibrary::SpawnSystemAttached(MuzzleFX,
+		WeaponMesh,
+		MuzzleSocketName,
+		FVector::ZeroVector,
+		FRotator::ZeroRotator,
+		EAttachLocation::SnapToTarget,true);
 }

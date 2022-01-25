@@ -16,11 +16,14 @@ public class FPShooter : ModuleRules
 			"InputCore", 
 			"Niagara",
 			"PhysicsCore",
+			"Blutility",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
-		
-		PublicIncludePaths.AddRange(new string[]
+
+		PublicIncludePaths.AddRange(new string[] { System.IO.Path.GetFullPath(Target.RelativeEnginePath) + "Source/Editor/Blutility/Private"});
+
+        PublicIncludePaths.AddRange(new string[]
 		{
 			"FPShooter/Public/Player",
 			"FPShooter/Public/Components", 

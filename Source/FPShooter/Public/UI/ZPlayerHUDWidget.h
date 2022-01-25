@@ -16,6 +16,8 @@ class FPSHOOTER_API UZPlayerHUDWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	virtual bool Initialize() override;
+	
 	UFUNCTION(BlueprintCallable, Category= "UI")
 	float GetHealthPercent() const;
 
@@ -30,4 +32,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category= "UI")
 	bool IsPlayerSpectating() const;
+
+	UFUNCTION(BlueprintImplementableEvent, Category= "UI")
+	void OnTakeDamage();
+
+private:
+	void OnHealthChanged(float Health, float HealthDelta);
 };

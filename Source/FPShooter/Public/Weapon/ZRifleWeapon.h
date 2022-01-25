@@ -7,6 +7,8 @@
 #include "ZRifleWeapon.generated.h"
 
 class UZWeaponFXComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
 
 /**
  * 
@@ -36,6 +38,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "VFX")
 	UZWeaponFXComponent* WeaponFXComponent;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "VFX")
+	UNiagaraSystem* TraceFX;
+
+	UPROPERTY(VisibleAnywhere, Category = "VFX")
+	FString TraceTargetName = "TraceTarget";
+
 	virtual void BeginPlay() override;
 	virtual void MakeShot() override;
 	virtual bool GetTraceData(FVector& TraceStart, FVector& TraceEnd) const override;
@@ -43,6 +51,12 @@ protected:
 
 private:
 	FTimerHandle ShortTimerHandle;
+
+	UPROPERTY()
+	UNiagaraComponent* MuzzleFXComponent;
 	
 	void MakeDamage(const FHitResult& HitResult);
+	void InitMuzzleFX();
+	void SetMuzzleFXVisiblity(bool Visible);
+	void SpawnTraceFX(const FVector& TraceStart, const FVector& TraceEnd);
 };

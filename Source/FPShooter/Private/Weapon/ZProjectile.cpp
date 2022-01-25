@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "ZWeaponFXComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AZProjectile::AZProjectile()
 	: DamageRadius(200.f), DamageAmount(50.f), bDoFullDamage(false), LifeSeconds(5.0f)
@@ -24,6 +25,9 @@ AZProjectile::AZProjectile()
 	MovementComponent->ProjectileGravityScale = 0.0f;
 
 	WeaponFXComponent = CreateDefaultSubobject<UZWeaponFXComponent>(TEXT("WeaponFXComponent"));
+	
+	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
+	EffectComp->SetupAttachment(RootComponent);
 }
 
 void AZProjectile::BeginPlay()
@@ -45,8 +49,9 @@ void AZProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Ot
 	if (GetWorld() == nullptr) return;
 
 	MovementComponent->StopMovementImmediately();
-
-	// TODO : make damage
+	EffectComp->DeactivateSystem();
+	
+	// make damage
 	UGameplayStatics::ApplyRadialDamage(GetWorld(), // 
 		DamageAmount,								//
 		GetActorLocation(),							//

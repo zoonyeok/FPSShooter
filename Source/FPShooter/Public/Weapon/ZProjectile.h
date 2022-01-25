@@ -24,6 +24,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category= "Weapon")
 	class UProjectileMovementComponent* MovementComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UParticleSystemComponent* EffectComp;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")
 	float DamageRadius;
 
@@ -40,7 +43,6 @@ protected:
 	class UZWeaponFXComponent* WeaponFXComponent;
 	
 	virtual void BeginPlay() override;
-
 private:
 	
 	FVector ShotDirection;
@@ -48,6 +50,6 @@ private:
 	UFUNCTION()
 	void OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
+	
 	AController* GetController() const;
 };

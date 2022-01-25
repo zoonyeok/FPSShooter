@@ -7,6 +7,7 @@
 #include "Weapon/ZBaseWeapon.h"
 #include "ZLauncherWeapon.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnLauncherFire);
 /**
  * 
  */
@@ -17,6 +18,8 @@ class FPSHOOTER_API AZLauncherWeapon : public AZBaseWeapon
 public:
 	AZLauncherWeapon();
 	virtual void StartFire() override;
+
+	FOnLauncherFire OnLauncherFire;
 	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon")

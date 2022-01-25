@@ -67,7 +67,7 @@ void ASBaseCharacter::PostInitializeComponents()
 	check(HealthTextComponent);
 	check(GetCharacterMovement());
 
-	OnHealthChanged(HealthComponent->GetHealth());
+	OnHealthChanged(HealthComponent->GetHealth(),HealthComponent->GetHealthDelta());
 	HealthComponent->OnDeath.AddUObject(this, &ASBaseCharacter::OnDeath);
 	HealthComponent->OnHealthChanged.AddUObject(this, &ASBaseCharacter::OnHealthChanged);
 
@@ -188,9 +188,9 @@ void ASBaseCharacter::OnDeath()
 	}
 }
 
-void ASBaseCharacter::OnHealthChanged(float Health)
+void ASBaseCharacter::OnHealthChanged(float Health,float HealthDelta)
 {
-	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%.0f"),Health)));
+	HealthTextComponent->SetText(FText::FromString(FString::Printf(TEXT("%0.f"),Health)));
 }
 
 bool ASBaseCharacter::IsRunning() const
